@@ -1,0 +1,9 @@
+DROP TABLE BANK;
+
+CREATE TABLE BANK (
+acno INTEGER not NULL,
+cname VARCHAR(255),
+actype VARCHAR(255),
+amt INTEGER,
+PRIMARY KEY ( acno )
+)
