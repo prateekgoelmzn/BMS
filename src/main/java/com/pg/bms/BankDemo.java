@@ -2,6 +2,7 @@ package com.pg.bms;
 
 import java.io.FileReader;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +17,12 @@ public class BankDemo {
 	static {
 		BankDemo.initConnection();
 		try {
-			RunScript.execute(con, new FileReader("src/main/resources/sqlscript.sql"));
+			DatabaseMetaData dbm = con.getMetaData();
+			ResultSet tables = dbm.getTables(null, null, "bank", null);
+			if (tables.next()) {
+				RunScript.execute(con, new FileReader("src/main/resources/dropscript.sql"));
+			}
+			RunScript.execute(con, new FileReader("src/main/resources/createscript.sql"));
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -116,7 +122,7 @@ public class BankDemo {
 				System.out.println("\t\tCustomer name :\t" + cname);
 				System.out.println("\t\tAccount type :\t" + actype);
 				System.out.println("\t\tBalance :\t" + amt);
-				if(infoFound!=true) infoFound = true;
+				if(!infoFound) infoFound = true;
 			}
 			if(!infoFound) {
 				System.out.println("\tNo entry found for account number : "+acno1);
@@ -236,7 +242,7 @@ public class BankDemo {
 			}
 			System.out.println("\t\t\t\tDo u want to continue....... press 1 for No");
 			k = s1.nextLine();
-		} while (k != "1");
+		} while (!k.equals( "1"));
 
 		try {
 			if (con != null && !con.isClosed()) {
